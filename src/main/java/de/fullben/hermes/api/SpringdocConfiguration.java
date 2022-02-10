@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Profile;
  * @author Benedikt Full
  */
 @Configuration
-@Profile("!prod")
 public class SpringdocConfiguration {
 
   public SpringdocConfiguration() {}
