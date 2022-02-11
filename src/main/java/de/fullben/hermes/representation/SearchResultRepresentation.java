@@ -1,4 +1,4 @@
-package de.fullben.hermes.data.transfer;
+package de.fullben.hermes.representation;
 
 /**
  * Represents the core data of a single result item of a web search.

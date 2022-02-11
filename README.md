@@ -4,10 +4,10 @@ A tiny, Spring Boot-based application that can be used to fetch the first ten re
 
 ## Application Features
 
-The primary feature of the application is the capability to return the first ten (regular, parsable) results of the [Google web search](https://www.google.com/). This can be achieved by issuing an HTTP POST request to the `HOST:PORT/api/search` endpoint and providing some term as `query` parameter, as show below:
+The primary feature of the application is the capability to return the first ten (regular, parsable) results of the [Google web search](https://www.google.com/). This can be achieved by issuing an HTTP GET request to the `HOST:PORT/api/search` endpoint and providing some term as `query` parameter, as show below:
 
 ```
-POST HOST:PORT/api/search?query=apple
+GET HOST:PORT/api/search?query=apple
 ``` 
 
 Furthermore, the application features UI-based API documentation, which can be found at `HOST:PORT/swagger-ui/index.html`. This page can be used to inspect and try out the available API endpoints.

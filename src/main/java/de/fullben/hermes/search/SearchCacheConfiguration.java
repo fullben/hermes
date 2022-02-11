@@ -19,7 +19,7 @@ public class SearchCacheConfiguration {
   private int expireAfterMins;
 
   @Min(1)
-  private int maxCacheSize;
+  private int maxSize;
 
   public SearchCacheConfiguration() {}
 
@@ -31,11 +31,11 @@ public class SearchCacheConfiguration {
     this.expireAfterMins = expireAfterMins;
   }
 
-  public int getMaxCacheSize() {
-    return maxCacheSize;
+  public int getMaxSize() {
+    return maxSize;
   }
 
-  public void setMaxCacheSize(int maxCacheSize) {
-    this.maxCacheSize = maxCacheSize;
+  public void setMaxSize(int maxSize) {
+    this.maxSize = maxSize;
   }
 }

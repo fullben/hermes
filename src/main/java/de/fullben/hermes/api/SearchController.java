@@ -1,6 +1,6 @@
 package de.fullben.hermes.api;
 
-import de.fullben.hermes.data.transfer.SearchResultRepresentation;
+import de.fullben.hermes.representation.SearchResultRepresentation;
 import de.fullben.hermes.search.SearchException;
 import de.fullben.hermes.search.google.GoogleSearchService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,7 +45,7 @@ public class SearchController {
             responseCode = "400",
             description = "If the given query string is null or blank")
       })
-  @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<SearchResultRepresentation>> searchGoogle(
       @RequestParam("query") @NotBlank String query) throws SearchException {
     return ResponseEntity.ok(googleSearchService.search(query));

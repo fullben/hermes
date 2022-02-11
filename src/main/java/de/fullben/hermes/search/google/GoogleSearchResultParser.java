@@ -1,8 +1,8 @@
 package de.fullben.hermes.search.google;
 
-import static de.fullben.hermes.util.Preconditions.nonNull;
+import static de.fullben.hermes.util.Preconditions.notNull;
 
-import de.fullben.hermes.data.transfer.SearchResultRepresentation;
+import de.fullben.hermes.representation.SearchResultRepresentation;
 import de.fullben.hermes.search.SearchException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +33,7 @@ public class GoogleSearchResultParser {
    * @throws SearchException if an error occurs while trying to parse the document
    */
   public List<SearchResultRepresentation> parse(Document doc) throws SearchException {
-    nonNull(doc);
+    notNull(doc);
     try {
       return doc.select(divClasses(DIV_CLASSES_RESULT_ITEM)).stream()
           .map(this::parseResult)
@@ -42,7 +42,7 @@ public class GoogleSearchResultParser {
       // Gotta catch 'em all: not really best practice, but it's very likely that this will fail
       // eventually (e.g., due to Google changing its site layout, or simply make a new obfuscation
       // run on their HTML class names, so on...), therefore we wrap any error in an exception type
-      // that can be handled further up the call chain
+      // that can be handled reliably further up the call chain
       throw new SearchException(
           "An error occurred while trying to parse a Google search result", e);
     }

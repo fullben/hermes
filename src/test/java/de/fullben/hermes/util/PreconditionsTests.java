@@ -18,28 +18,28 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class PreconditionsTests {
 
   @Test
-  public void nonNullThrowsIllegalArgumentExceptionIfParamIsNull() {
-    assertThrows(IllegalArgumentException.class, () -> Preconditions.nonNull(null));
+  public void notNullThrowsIllegalArgumentExceptionIfParamIsNull() {
+    assertThrows(IllegalArgumentException.class, () -> Preconditions.notNull(null));
   }
 
   @ParameterizedTest
   @MethodSource("nonNullObjects")
-  public void nonNullReturnsNonNullParam(Object o) {
-    Supplier<Object> nullCheck = () -> Preconditions.nonNull(o);
+  public void notNullReturnsNonNullParam(Object o) {
+    Supplier<Object> nullCheck = () -> Preconditions.notNull(o);
     Object checked = nullCheck.get();
     assertEquals(o, checked);
   }
 
   @ParameterizedTest
   @MethodSource("blankAndNullStrings")
-  public void nonBlankThrowsIllegalArgumentExceptionIfParamIsInvalid(String s) {
-    assertThrows(IllegalArgumentException.class, () -> Preconditions.nonBlank(s));
+  public void notBlankThrowsIllegalArgumentExceptionIfParamIsInvalid(String s) {
+    assertThrows(IllegalArgumentException.class, () -> Preconditions.notBlank(s));
   }
 
   @ParameterizedTest
   @MethodSource("validStrings")
-  public void nonBlankReturnsNonBlankString(String s) {
-    Supplier<String> nullCheck = () -> Preconditions.nonBlank(s);
+  public void notBlankReturnsNonBlankString(String s) {
+    Supplier<String> nullCheck = () -> Preconditions.notBlank(s);
     String checked = nullCheck.get();
     assertEquals(s, checked);
   }

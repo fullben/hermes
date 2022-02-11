@@ -11,14 +11,14 @@ public final class Preconditions {
     throw new AssertionError();
   }
 
-  public static <T> T nonNull(T t) {
+  public static <T> T notNull(T t) {
     if (t == null) {
       throw new IllegalArgumentException("Must not be null");
     }
     return t;
   }
 
-  public static String nonBlank(String s) {
+  public static String notBlank(String s) {
     if (s == null || s.isBlank()) {
       throw new IllegalArgumentException("Must be neither null nor blank");
     }
