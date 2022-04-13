@@ -52,8 +52,8 @@ public class GoogleSearchResultParser {
     SearchResultRepresentation res = new SearchResultRepresentation();
     res.setTitle(parseResultTitle(result));
     res.setSnippet(parseResultSnippet(result));
-    res.setUrl(parseUrl(result));
-    res.setPageHierarchy(parseUrlHierarchy(result));
+    res.setUrl(parseResultUrl(result));
+    res.setPageHierarchy(parseResultPageHierarchy(result));
     return res;
   }
 
@@ -61,7 +61,7 @@ public class GoogleSearchResultParser {
     return firstElementChildText(result, divClasses(DIV_CLASSES_TITLE));
   }
 
-  private String parseUrl(Element result) {
+  private String parseResultUrl(Element result) {
     Element link = result.select("a[href]").first();
     if (link == null) {
       return null;
@@ -83,7 +83,7 @@ public class GoogleSearchResultParser {
     return url;
   }
 
-  private String parseUrlHierarchy(Element result) {
+  private String parseResultPageHierarchy(Element result) {
     return firstElementChildText(result, divClasses(DIV_CLASSES_PAGE_HIERARCHY));
   }
 

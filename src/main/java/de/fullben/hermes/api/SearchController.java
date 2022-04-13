@@ -43,7 +43,11 @@ public class SearchController {
                 "If the application was able to successfully use the provided query for executing a Google search"),
         @ApiResponse(
             responseCode = "400",
-            description = "If the given query string is null or blank")
+            description = "If the given query string is null or blank"),
+        @ApiResponse(
+            responseCode = "500",
+            description =
+                "If an error arises while executing the Google search or processing its results")
       })
   @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<SearchResultRepresentation>> searchGoogle(
