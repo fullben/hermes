@@ -1,9 +1,12 @@
 package de.fullben.hermes.api;
 
+import de.fullben.hermes.representation.ErrorRepresentation;
 import de.fullben.hermes.representation.SearchResultRepresentation;
 import de.fullben.hermes.search.SearchException;
 import de.fullben.hermes.search.google.GoogleSearchService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
@@ -43,11 +46,13 @@ public class SearchController {
                 "If the application was able to successfully use the provided query for executing a Google search"),
         @ApiResponse(
             responseCode = "400",
-            description = "If the given query string is null or blank"),
+            description = "If the given query string is null or blank",
+            content = {@Content(schema = @Schema(implementation = ErrorRepresentation.class))}),
         @ApiResponse(
             responseCode = "500",
             description =
-                "If an error arises while executing the Google search or processing its results")
+                "If an error arises while executing the Google search or processing its results",
+            content = {@Content(schema = @Schema(implementation = ErrorRepresentation.class))})
       })
   @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<SearchResultRepresentation>> searchGoogle(

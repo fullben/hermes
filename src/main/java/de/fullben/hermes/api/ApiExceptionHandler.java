@@ -1,5 +1,6 @@
 package de.fullben.hermes.api;
 
+import de.fullben.hermes.representation.ErrorRepresentation;
 import de.fullben.hermes.search.SearchException;
 import javax.validation.ConstraintViolationException;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 /**
- * Defines handling for some exception types expected to be encountered at API level.
+ * Defines handling for some exception types expected to be encountered at the web API level.
  *
  * @author Benedikt Full
  */
@@ -25,23 +26,21 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(value = {ConstraintViolationException.class})
   protected ResponseEntity<Object> handleConflict(
       ConstraintViolationException ex, WebRequest request) {
+    HttpStatus status = HttpStatus.BAD_REQUEST;
     return handleExceptionInternal(
-        ex, ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        ex, new ErrorRepresentation(status, ex.getMessage()), new HttpHeaders(), status, request);
   }
 
   @ExceptionHandler(value = {SearchException.class})
   protected ResponseEntity<Object> handleConflict(SearchException ex, WebRequest request) {
     HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-    log(ex, status);
+    String msg = "Something went wrong while trying to execute your search";
+    log(ex, status, msg);
     return handleExceptionInternal(
-        ex,
-        "Something went wrong while trying to execute your search",
-        new HttpHeaders(),
-        status,
-        request);
+        ex, new ErrorRepresentation(status, msg), new HttpHeaders(), status, request);
   }
 
-  private void log(Exception e, HttpStatus status) {
-    LOG.warn("{}: {} (Responding with: {})", e.getClass().getSimpleName(), e.getMessage(), status);
+  private void log(Exception e, HttpStatus status, String message) {
+    LOG.warn("{}: {} (Responding with: {})", e.getClass().getSimpleName(), message, status);
   }
 }
