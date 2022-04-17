@@ -3,8 +3,9 @@ package de.fullben.hermes.api;
 import de.fullben.hermes.representation.ErrorRepresentation;
 import de.fullben.hermes.representation.SearchResultRepresentation;
 import de.fullben.hermes.search.SearchException;
-import de.fullben.hermes.search.google.GoogleSearchService;
+import de.fullben.hermes.search.WebSearchService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller for all endpoints related to (Google) web search activities.
+ * Controller for all endpoints related to web search activities.
  *
  * @author Benedikt Full
  */
@@ -29,16 +30,25 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class SearchController {
 
-  private final GoogleSearchService googleSearchService;
+  private final WebSearchService webSearchService;
 
   @Autowired
-  public SearchController(GoogleSearchService googleSearchService) {
-    this.googleSearchService = googleSearchService;
+  public SearchController(WebSearchService webSearchService) {
+    this.webSearchService = webSearchService;
   }
 
   @Operation(
-      summary = "Returns Google search results",
-      description = "Returns the first ten results from a Google search with the given query.",
+      summary = "Returns web search results",
+      description =
+          "Can be used to acquire a specific number of search results from a given web search provider.",
+      parameters = {
+        @Parameter(name = "q", description = "The query string, case-insensitive", required = true),
+        @Parameter(name = "n", description = "The number of results to be returned"),
+        @Parameter(
+            name = "p",
+            description =
+                "The web search provider to be used for the search, supported are Google and Bing")
+      },
       responses = {
         @ApiResponse(
             responseCode = "200",
@@ -55,8 +65,12 @@ public class SearchController {
             content = {@Content(schema = @Schema(implementation = ErrorRepresentation.class))})
       })
   @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<List<SearchResultRepresentation>> searchGoogle(
-      @RequestParam("query") @NotBlank String query) throws SearchException {
-    return ResponseEntity.ok(googleSearchService.search(query));
+  public ResponseEntity<List<SearchResultRepresentation>> search(
+      @RequestParam("q") @NotBlank String query,
+      @RequestParam(value = "n", required = false, defaultValue = "10") int resultCount,
+      @RequestParam(value = "p", required = false, defaultValue = "google") @NotBlank
+          String provider)
+      throws SearchException {
+    return ResponseEntity.ok(webSearchService.search(query, resultCount, provider));
   }
 }

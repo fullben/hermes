@@ -1,14 +1,22 @@
 # Hermes
 
-A tiny, Spring Boot-based application that can be used to fetch the first ten results of a Google search for some given query value.
+A tiny, Spring Boot-based application that can be used to fetch web search results from various web search implementations for some given query value.
 
 ## Application Features
 
-The primary feature of the application is the capability to return the first ten (regular, parsable) results of the [Google web search](https://www.google.com/). This can be achieved by issuing an HTTP GET request to the `HOST:PORT/api/search` endpoint and providing some term as `query` parameter, as show below:
+The primary feature of the application is the capability to return the first (regular, parsable) results of the [Google web search](https://www.google.com/) and the [Bing web search](http://www.bing.com/search). This can be achieved by issuing an HTTP GET request to the `HOST:PORT/api/search` endpoint and providing the appropriate parameters. Supported parameters are as follows:
+
+Parameter|Description|Values|Optional
+---|---|---|---
+`q`|The query term to be used|Any non-blank string|No
+`n`|The number of results to be returned by the search|A positive integer (ideally not greater than 30)|Yes (defaults to 10)
+`p`|The search provider to be used|`google` or `bing`|Yes (defaults to `google`)
+
+An example request for searching the term *neptune*, expecting 20 results and using Bing web search is shown in the following:
 
 ```
-GET HOST:PORT/api/search?query=apple
-``` 
+GET HOST:PORT/api/search?q=neptune&n=20&p=bing
+```
 
 Furthermore, the application features UI-based API documentation, which can be found at `HOST:PORT/swagger-ui/index.html`. This page can be used to inspect and try out the available API endpoints.
 

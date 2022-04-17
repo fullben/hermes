@@ -4,6 +4,7 @@ import static de.fullben.hermes.util.Preconditions.notNull;
 
 import de.fullben.hermes.representation.SearchResultRepresentation;
 import de.fullben.hermes.search.SearchException;
+import de.fullben.hermes.search.SearchResultParser;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jsoup.nodes.Document;
@@ -15,7 +16,7 @@ import org.jsoup.nodes.Element;
  *
  * @author Benedikt Full
  */
-public class GoogleSearchResultParser {
+public class GoogleSearchResultParser implements SearchResultParser {
 
   private static final String DIV_CLASSES_RESULT_ITEM = "ZINbbc luh4tb xpd O9g5cc uUPGi";
   private static final String DIV_CLASSES_PAGE_HIERARCHY = "BNeawe UPmit AP7Wnd";
@@ -32,6 +33,7 @@ public class GoogleSearchResultParser {
    * @return a list of all parsable results found
    * @throws SearchException if an error occurs while trying to parse the document
    */
+  @Override
   public List<SearchResultRepresentation> parse(Document doc) throws SearchException {
     notNull(doc);
     try {

@@ -31,16 +31,23 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ex, new ErrorRepresentation(status, ex.getMessage()), new HttpHeaders(), status, request);
   }
 
+  @ExceptionHandler(value = {InvalidParamException.class})
+  protected ResponseEntity<Object> handleConflict(InvalidParamException ex, WebRequest request) {
+    HttpStatus status = HttpStatus.BAD_REQUEST;
+    return handleExceptionInternal(
+        ex, new ErrorRepresentation(status, ex.getMessage()), new HttpHeaders(), status, request);
+  }
+
   @ExceptionHandler(value = {SearchException.class})
   protected ResponseEntity<Object> handleConflict(SearchException ex, WebRequest request) {
     HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
     String msg = "Something went wrong while trying to execute your search";
-    log(ex, status, msg);
+    logVerbose(ex, status, msg);
     return handleExceptionInternal(
         ex, new ErrorRepresentation(status, msg), new HttpHeaders(), status, request);
   }
 
-  private void log(Exception e, HttpStatus status, String message) {
-    LOG.warn("{}: {} (Responding with: {})", e.getClass().getSimpleName(), message, status);
+  private void logVerbose(Exception e, HttpStatus status, String message) {
+    LOG.error("{}: {} (Responding with: {})", e.getClass().getSimpleName(), message, status, e);
   }
 }
