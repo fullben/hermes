@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -67,7 +68,7 @@ public class SearchController {
   @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<SearchResultRepresentation>> search(
       @RequestParam("q") @NotBlank String query,
-      @RequestParam(value = "n", required = false, defaultValue = "10") int resultCount,
+      @RequestParam(value = "n", required = false, defaultValue = "10") @Min(1) int resultCount,
       @RequestParam(value = "p", required = false, defaultValue = "google") @NotBlank
           String provider)
       throws SearchException {

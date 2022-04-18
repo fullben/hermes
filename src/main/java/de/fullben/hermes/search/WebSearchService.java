@@ -31,15 +31,15 @@ public class WebSearchService {
    *
    * @param query the query string, usually case-insensitive
    * @param resultCount the number of results to be returned
-   * @param provider the web search provider to be employed, e.g., Google
+   * @param provider the web search provider to be employed, e.g., {@code "google"}
    * @return the found results
    * @throws SearchException if an error occurs while executing the web search or processing its
    *     result data
-   * @throws InvalidParamException if the given {@code provider} can not be matched with any of the
+   * @throws InvalidParamException if the given {@code provider} cannot be matched with any of the
    *     supported providers
    */
   public List<SearchResultRepresentation> search(String query, int resultCount, String provider)
-      throws SearchException {
+      throws SearchException, InvalidParamException {
     SearchProvider searchProvider = SearchProvider.find(provider);
     if (searchProvider == SearchProvider.GOOGLE) {
       return googleSearchService.search(query, resultCount);

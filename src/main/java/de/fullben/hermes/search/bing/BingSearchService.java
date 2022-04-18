@@ -12,13 +12,14 @@ public class BingSearchService extends CachingSearchService {
   @Autowired
   public BingSearchService(SearchCacheConfiguration cacheConfig) {
     super(
-        cacheConfig,
         WebSearchClient.builder()
             .searchUrl("http://www.bing.com/search")
             .queryParam("q")
             .resultCountParam("count")
+            .maxResultsPerPage(50)
             .defaultUserAgent()
             .build(),
-        new BingSearchResultParser());
+        new BingSearchResultParser(),
+        cacheConfig);
   }
 }

@@ -27,7 +27,7 @@ public class BingSearchResultParser implements SearchResultParser {
           .collect(Collectors.toList());
     } catch (Exception e) {
       // Gotta catch 'em all: not really best practice, but it's very likely that this will fail
-      // eventually (e.g., due to Bing changing its site layout, or simply make a new obfuscation
+      // eventually (e.g., due to Bing changing its site layout, or simply make an obfuscation
       // run on their HTML class names, so on...), therefore we wrap any error in an exception type
       // that can be handled reliably further up the call chain
       throw new SearchException("An error occurred while trying to parse a Bing search result", e);
@@ -43,6 +43,8 @@ public class BingSearchResultParser implements SearchResultParser {
     res.setTitle(parseResultTitle(result));
     res.setSnippet(parseResultSnippet(result));
     res.setUrl(parseResultUrl(result));
+    // Set this to null explicitly, because Bing does not provide page hierarchy information
+    res.setPageHierarchy(null);
     return res;
   }
 

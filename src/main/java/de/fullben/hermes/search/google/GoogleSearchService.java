@@ -17,13 +17,14 @@ public class GoogleSearchService extends CachingSearchService {
   @Autowired
   public GoogleSearchService(SearchCacheConfiguration cacheConfig) {
     super(
-        cacheConfig,
         WebSearchClient.builder()
             .searchUrl("http://www.google.com/search")
             .queryParam("q")
             .resultCountParam("num")
+            .maxResultsPerPage(100)
             .defaultUserAgent()
             .build(),
-        new GoogleSearchResultParser());
+        new GoogleSearchResultParser(),
+        cacheConfig);
   }
 }

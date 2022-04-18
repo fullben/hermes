@@ -25,21 +25,22 @@ import org.jsoup.nodes.Document;
 public abstract class CachingSearchService {
 
   private static final Logger LOG = LogManager.getLogger(CachingSearchService.class);
-  private final Cache<String, List<SearchResultRepresentation>> resultCache;
   private final WebSearchClient webSearchClient;
-  private final SearchResultParser searchResultParser;
+  private final SearchResultParser webSearchResultParser;
+  private final Cache<String, List<SearchResultRepresentation>> resultCache;
 
-  protected CachingSearchService(
-      SearchCacheConfiguration cacheConfig,
+  public CachingSearchService(
       WebSearchClient webSearchClient,
-      SearchResultParser searchResultParser) {
+      SearchResultParser webSearchResultParser,
+      SearchCacheConfiguration cacheConfig) {
+    this.webSearchClient = notNull(webSearchClient);
+    this.webSearchResultParser = notNull(webSearchResultParser);
+    notNull(cacheConfig);
     resultCache =
         Caffeine.newBuilder()
-            .expireAfterWrite(notNull(cacheConfig).getExpireAfterMins(), TimeUnit.MINUTES)
+            .expireAfterWrite(cacheConfig.getExpireAfterMins(), TimeUnit.MINUTES)
             .maximumSize(cacheConfig.getMaxSize())
             .build();
-    this.webSearchClient = notNull(webSearchClient);
-    this.searchResultParser = notNull(searchResultParser);
   }
 
   /**
@@ -64,7 +65,7 @@ public abstract class CachingSearchService {
   public List<SearchResultRepresentation> search(String query, int resultCount)
       throws SearchException {
     greaterThan(0, resultCount);
-    // To lower, because Google search is not case-sensitive
+    // To lower, because usually web searches are not case-sensitive
     query = notBlank(query).toLowerCase(Locale.ROOT);
 
     // If cached search results exist, return a copy of the cached values
@@ -76,7 +77,7 @@ public abstract class CachingSearchService {
           .collect(Collectors.toList());
     }
 
-    // Actually execute the Google search, parse, cache, and return the result
+    // Actually execute the web search, parse, cache, and return the result
     List<SearchResultRepresentation> results = findResults(query, resultCount, 6);
     resultCache.put(query, results);
     return results;
@@ -106,6 +107,6 @@ public abstract class CachingSearchService {
   private List<SearchResultRepresentation> searchAndParse(String query, int maxResults)
       throws SearchException {
     Document searchResults = webSearchClient.search(query, maxResults);
-    return searchResultParser.parse(searchResults);
+    return webSearchResultParser.parse(searchResults);
   }
 }

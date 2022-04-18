@@ -1,5 +1,6 @@
 package de.fullben.hermes.search;
 
+import static de.fullben.hermes.util.Preconditions.greaterThan;
 import static de.fullben.hermes.util.Preconditions.notBlank;
 
 /**
@@ -16,11 +17,12 @@ public class WebSearchClientBuilder {
    * @author Benedikt Full
    */
   public static class Builder
-      implements FirstStep, QueryStep, ResultCountStep, UserAgentStep, FinalStep {
+      implements FirstStep, QueryStep, ResultCountStep, ResultLimitStep, UserAgentStep, FinalStep {
 
     private String searchUrl;
     private String queryParam;
     private String resultCountParam;
+    private int maxResultsPerPage;
     private String userAgent;
 
     @Override
@@ -36,8 +38,14 @@ public class WebSearchClientBuilder {
     }
 
     @Override
-    public UserAgentStep resultCountParam(String resultCountParam) {
+    public ResultLimitStep resultCountParam(String resultCountParam) {
       this.resultCountParam = notBlank(resultCountParam);
+      return this;
+    }
+
+    @Override
+    public UserAgentStep maxResultsPerPage(int maxResultsPerPage) {
+      this.maxResultsPerPage = greaterThan(0, maxResultsPerPage);
       return this;
     }
 
@@ -55,7 +63,8 @@ public class WebSearchClientBuilder {
 
     @Override
     public WebSearchClient build() {
-      return new WebSearchClient(searchUrl, queryParam, resultCountParam, userAgent);
+      return new WebSearchClient(
+          searchUrl, queryParam, resultCountParam, maxResultsPerPage, userAgent);
     }
   }
 
@@ -91,7 +100,18 @@ public class WebSearchClientBuilder {
      * @param resultCountParam the name of the URL parameter indicating the search result count
      * @return this builder instance
      */
-    UserAgentStep resultCountParam(String resultCountParam);
+    ResultLimitStep resultCountParam(String resultCountParam);
+  }
+
+  public interface ResultLimitStep {
+
+    /**
+     * Sets the maximum number of results per page supported by the web search to the given value.
+     *
+     * @param maxResults the maximum number of results per page, a value greater than zero
+     * @return this builder instance
+     */
+    UserAgentStep maxResultsPerPage(int maxResults);
   }
 
   public interface UserAgentStep {

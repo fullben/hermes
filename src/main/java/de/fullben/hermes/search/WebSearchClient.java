@@ -27,19 +27,32 @@ public class WebSearchClient {
   private final String searchUrl;
   private final String queryParam;
   private final String resultCountParam;
+  private final int maxResultsPerPage;
   private final String userAgent;
   private Connection connection;
 
   public WebSearchClient(
-      String searchUrl, String queryParam, String resultCountParam, String userAgent) {
+      String searchUrl,
+      String queryParam,
+      String resultCountParam,
+      int maxResultsPerPage,
+      String userAgent) {
     this.searchUrl = notBlank(searchUrl);
     this.queryParam = notBlank(queryParam);
     this.resultCountParam = notBlank(resultCountParam);
+    this.maxResultsPerPage = greaterThan(0, maxResultsPerPage);
     this.userAgent = notBlank(userAgent);
+    connection = null;
   }
 
-  public WebSearchClient(String searchUrl, String queryParam, String resultCountParam) {
-    this(searchUrl, queryParam, resultCountParam, "ExampleBot 2.0 (+http://example.com/bot)");
+  public WebSearchClient(
+      String searchUrl, String queryParam, String resultCountParam, int maxResultsPerPage) {
+    this(
+        searchUrl,
+        queryParam,
+        resultCountParam,
+        maxResultsPerPage,
+        "ExampleBot 2.0 (+http://example.com/bot)");
   }
 
   /**
@@ -55,6 +68,13 @@ public class WebSearchClient {
    * Uses the web search configured for this client to return a web document containing the result
    * data for the provided query. The document will at most contain {@code maxResults} result items.
    *
+   * <p><b>Note: </b>As this implementation only returns a single web document, the number of search
+   * results retrievable via this method is limited to the maximum number of results per page
+   * supported by the configured web search implementation. Google web search for example supports
+   * no more than 100 results per page. Therefore, this method will never return a document
+   * containing more than 100 results if Google is configured as web search implementation, even if
+   * the provided value for {@code maxResults} exceeds 100.
+   *
    * @param query the search term, usually case-insensitive
    * @param maxResults the maximum number of results contained within the returned document
    * @return the web search result page
@@ -64,6 +84,14 @@ public class WebSearchClient {
     long startTime = System.currentTimeMillis();
     notBlank(query);
     greaterThan(0, maxResults);
+    if (maxResults >= (maxResultsPerPage - 4)) {
+      LOG.warn(
+          "Search may return insufficient results for provider '{}' (supported: {}, requested: {})",
+          searchUrl,
+          box(maxResultsPerPage),
+          box(maxResults));
+    }
+
     try {
       Document doc =
           connection()
