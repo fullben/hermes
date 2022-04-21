@@ -6,6 +6,11 @@ import de.fullben.hermes.search.WebSearchClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service that provides access to functionality centered around Bing's web search.
+ *
+ * @author Benedikt Full
+ */
 @Service
 public class BingSearchService extends CachingSearchService {
 

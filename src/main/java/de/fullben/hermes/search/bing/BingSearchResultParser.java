@@ -10,6 +10,12 @@ import java.util.stream.Collectors;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+/**
+ * Parser for converting a {@link Document} representing a Bing web search result page to a more
+ * suitable data representation.
+ *
+ * @author Benedikt Full
+ */
 public class BingSearchResultParser implements SearchResultParser {
 
   private static final String ID_RESULT_LIST = "b_results";
