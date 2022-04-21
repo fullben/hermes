@@ -20,9 +20,9 @@ public class BingSearchService extends CachingSearchService {
         WebSearchClient.builder()
             .searchUrl("http://www.bing.com/search")
             .queryParam("q")
-            .resultCountParam("count")
+            .maxResultsPerPageParam("count")
             .maxResultsPerPage(50)
-            .defaultUserAgent()
+            .firefoxOnWindowsUserAgent()
             .build(),
         new BingSearchResultParser(),
         cacheConfig);

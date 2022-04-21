@@ -21,7 +21,7 @@ public class WebSearchClientBuilder {
 
     private String searchUrl;
     private String queryParam;
-    private String resultCountParam;
+    private String maxResultsPerPageParam;
     private int maxResultsPerPage;
     private String userAgent;
 
@@ -38,8 +38,8 @@ public class WebSearchClientBuilder {
     }
 
     @Override
-    public ResultLimitStep resultCountParam(String resultCountParam) {
-      this.resultCountParam = notBlank(resultCountParam);
+    public ResultLimitStep maxResultsPerPageParam(String maxResultsPerPageParam) {
+      this.maxResultsPerPageParam = notBlank(maxResultsPerPageParam);
       return this;
     }
 
@@ -50,21 +50,26 @@ public class WebSearchClientBuilder {
     }
 
     @Override
-    public FinalStep defaultUserAgent() {
-      this.userAgent = "ExampleBot 2.0 (+http://example.com/bot)";
-      return this;
-    }
-
-    @Override
     public FinalStep userAgent(String userAgent) {
       this.userAgent = notBlank(userAgent);
       return this;
     }
 
     @Override
+    public FinalStep defaultUserAgent() {
+      return userAgent("ExampleBot 2.0 (+http://example.com/bot)");
+    }
+
+    @Override
+    public FinalStep firefoxOnWindowsUserAgent() {
+      return userAgent(
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:99.0) Gecko/20100101 Firefox/99.0");
+    }
+
+    @Override
     public WebSearchClient build() {
       return new WebSearchClient(
-          searchUrl, queryParam, resultCountParam, maxResultsPerPage, userAgent);
+          searchUrl, queryParam, maxResultsPerPageParam, maxResultsPerPage, userAgent);
     }
   }
 
@@ -95,12 +100,13 @@ public class WebSearchClientBuilder {
 
     /**
      * Sets the name of the URL parameter use by the web search provider to indicate the number of
-     * search results.
+     * search results per page.
      *
-     * @param resultCountParam the name of the URL parameter indicating the search result count
+     * @param maxResultsPerPageParam the name of the URL parameter indicating the search result
+     *     count
      * @return this builder instance
      */
-    ResultLimitStep resultCountParam(String resultCountParam);
+    ResultLimitStep maxResultsPerPageParam(String maxResultsPerPageParam);
   }
 
   public interface ResultLimitStep {
@@ -122,6 +128,14 @@ public class WebSearchClientBuilder {
      * @return this builder instance
      */
     FinalStep defaultUserAgent();
+
+    /**
+     * Sets the user agent to a recent (04/2022) version of Mozilla Firefox running on a Windows 10
+     * machine.
+     *
+     * @return this builder instance
+     */
+    FinalStep firefoxOnWindowsUserAgent();
 
     /**
      * Sets the given value as the user agent executing the web search requests.

@@ -20,7 +20,7 @@ public class GoogleSearchService extends CachingSearchService {
         WebSearchClient.builder()
             .searchUrl("http://www.google.com/search")
             .queryParam("q")
-            .resultCountParam("num")
+            .maxResultsPerPageParam("num")
             .maxResultsPerPage(100)
             .defaultUserAgent()
             .build(),
