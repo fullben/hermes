@@ -57,7 +57,8 @@ public class SearchController {
                 "If the application was able to successfully use the provided query for executing a Google search"),
         @ApiResponse(
             responseCode = "400",
-            description = "If the given query string is null or blank",
+            description =
+                "If the given query string is null or blank, the result count is smaller than one, or the given provider is invalid",
             content = {@Content(schema = @Schema(implementation = ErrorRepresentation.class))}),
         @ApiResponse(
             responseCode = "500",
