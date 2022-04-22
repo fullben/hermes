@@ -17,19 +17,21 @@ import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
 
 /**
- * Service capable of using a specific web search implementation to acquire a set of results for a
- * given query term. Results are cached.
+ * Base class for simple web search service implementations. Uses a specific web search
+ * implementation which can be utilized to acquire a set of results for a given query term (see
+ * {@link #search(String, int)}. Results are cached in an instance-maintained {@link Caffeine}
+ * cache.
  *
  * @author Benedikt Full
  */
-public abstract class CachingSearchService {
+public abstract class CachingWebSearch {
 
-  private static final Logger LOG = LogManager.getLogger(CachingSearchService.class);
+  private static final Logger LOG = LogManager.getLogger(CachingWebSearch.class);
   private final WebSearchClient webSearchClient;
   private final SearchResultParser webSearchResultParser;
   private final Cache<String, List<SearchResultRepresentation>> resultCache;
 
-  public CachingSearchService(
+  public CachingWebSearch(
       WebSearchClient webSearchClient,
       SearchResultParser webSearchResultParser,
       SearchCacheConfiguration cacheConfig) {
@@ -44,19 +46,21 @@ public abstract class CachingSearchService {
   }
 
   /**
-   * Runs the web search for the provided query term and returns a list of the first parsable
-   * results. In order to be <i>parsable</i>, results must be in default formatting. Web search
-   * providers will often present some of the first results in a different layout than subsequent
-   * results. These results may not be returned by this method.
+   * Runs the web search for the provided query term and returns a list of the found results.
+   * Usually, these results are limited to the easily parsable results. In order to be <i>easily
+   * parsable</i>, results must be in the default result formatting of the web search provider
+   * employed by this instance. Web search providers will often present some of the first results in
+   * a different layout than subsequent results. These results may not be returned by this method.
    *
    * <p>Note that this service employs caching. While the first call to this method with some
    * specific query (e.g., <i>apple</i>) will result in a request to the web search, subsequent
    * calls with the same query (e.g., <i>apple</i> or <i>Apple</i>, as web search queries are
    * case-insensitive) will return a cached result for a certain amount of time.
    *
-   * @param query the search term
+   * @param query the search term, case-insensitive
    * @param resultCount the number of search results to be returned
-   * @return a list of search results
+   * @return a list of search results, containing the number of items specified via {@code
+   *     resultCount}
    * @throws SearchException if an error is encountered while trying to run the web search or
    *     parsing the resulting website
    * @throws IllegalArgumentException if the given query is {@code null} or blank, or the result

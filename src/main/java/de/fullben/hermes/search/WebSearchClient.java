@@ -26,7 +26,7 @@ public class WebSearchClient {
   private static final Logger LOG = LogManager.getLogger(WebSearchClient.class);
   private final String searchUrl;
   private final String queryParam;
-  private final String maxResultsPerPageParam;
+  private final String resultsPerPageParam;
   private final int maxResultsPerPage;
   private final String userAgent;
   private Connection connection;
@@ -34,23 +34,23 @@ public class WebSearchClient {
   public WebSearchClient(
       String searchUrl,
       String queryParam,
-      String maxResultsPerPageParam,
+      String resultsPerPageParam,
       int maxResultsPerPage,
       String userAgent) {
     this.searchUrl = notBlank(searchUrl);
     this.queryParam = notBlank(queryParam);
-    this.maxResultsPerPageParam = notBlank(maxResultsPerPageParam);
+    this.resultsPerPageParam = notBlank(resultsPerPageParam);
     this.maxResultsPerPage = greaterThan(0, maxResultsPerPage);
     this.userAgent = notBlank(userAgent);
     connection = null;
   }
 
   public WebSearchClient(
-      String searchUrl, String queryParam, String maxResultsPerPageParam, int maxResultsPerPage) {
+      String searchUrl, String queryParam, String resultsPerPageParam, int maxResultsPerPage) {
     this(
         searchUrl,
         queryParam,
-        maxResultsPerPageParam,
+        resultsPerPageParam,
         maxResultsPerPage,
         "ExampleBot 2.0 (+http://example.com/bot)");
   }
@@ -96,7 +96,7 @@ public class WebSearchClient {
       Document doc =
           connection()
               .data(queryParam, URLEncoder.encode(query, StandardCharsets.UTF_8))
-              .data(maxResultsPerPageParam, String.valueOf(maxResults))
+              .data(resultsPerPageParam, String.valueOf(maxResults))
               .get();
       LOG.info(
           "Web search for query '{}' (max. results: {}) took {} ms",

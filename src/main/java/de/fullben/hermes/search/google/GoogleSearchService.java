@@ -1,6 +1,6 @@
 package de.fullben.hermes.search.google;
 
-import de.fullben.hermes.search.CachingSearchService;
+import de.fullben.hermes.search.CachingWebSearch;
 import de.fullben.hermes.search.SearchCacheConfiguration;
 import de.fullben.hermes.search.WebSearchClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * @author Benedikt Full
  */
 @Service
-public class GoogleSearchService extends CachingSearchService {
+public class GoogleSearchService extends CachingWebSearch {
 
   @Autowired
   public GoogleSearchService(SearchCacheConfiguration cacheConfig) {
@@ -20,7 +20,7 @@ public class GoogleSearchService extends CachingSearchService {
         WebSearchClient.builder()
             .searchUrl("http://www.google.com/search")
             .queryParam("q")
-            .maxResultsPerPageParam("num")
+            .resultsPerPageParam("num")
             .maxResultsPerPage(100)
             .defaultUserAgent()
             .build(),

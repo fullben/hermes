@@ -21,7 +21,7 @@ public class WebSearchClientBuilder {
 
     private String searchUrl;
     private String queryParam;
-    private String maxResultsPerPageParam;
+    private String resultsPerPageParam;
     private int maxResultsPerPage;
     private String userAgent;
 
@@ -38,8 +38,8 @@ public class WebSearchClientBuilder {
     }
 
     @Override
-    public ResultLimitStep maxResultsPerPageParam(String maxResultsPerPageParam) {
-      this.maxResultsPerPageParam = notBlank(maxResultsPerPageParam);
+    public ResultLimitStep resultsPerPageParam(String resultsPerPageParam) {
+      this.resultsPerPageParam = notBlank(resultsPerPageParam);
       return this;
     }
 
@@ -69,14 +69,14 @@ public class WebSearchClientBuilder {
     @Override
     public WebSearchClient build() {
       return new WebSearchClient(
-          searchUrl, queryParam, maxResultsPerPageParam, maxResultsPerPage, userAgent);
+          searchUrl, queryParam, resultsPerPageParam, maxResultsPerPage, userAgent);
     }
   }
 
   public interface FirstStep {
 
     /**
-     * Sets the address of the web search to be used by the client (e.g., {@code
+     * The address of the web search to be used by the client (e.g., {@code
      * http://www.google.com/search} for the Google web search).
      *
      * @param url the web address of a web search
@@ -88,7 +88,7 @@ public class WebSearchClientBuilder {
   public interface QueryStep {
 
     /**
-     * Sets the name of the URL parameter used by the web search provider to set the query term.
+     * The name of the URL parameter used by the web search provider to set the query term.
      *
      * @param queryParam the name of the query URL parameter
      * @return this builder instance
@@ -99,20 +99,19 @@ public class WebSearchClientBuilder {
   public interface ResultCountStep {
 
     /**
-     * Sets the name of the URL parameter use by the web search provider to indicate the number of
-     * search results per page.
+     * The name of the URL parameter use by the web search provider to indicate the number of search
+     * results per page.
      *
-     * @param maxResultsPerPageParam the name of the URL parameter indicating the search result
-     *     count
+     * @param resultsPerPageParam the name of the URL parameter indicating the search result count
      * @return this builder instance
      */
-    ResultLimitStep maxResultsPerPageParam(String maxResultsPerPageParam);
+    ResultLimitStep resultsPerPageParam(String resultsPerPageParam);
   }
 
   public interface ResultLimitStep {
 
     /**
-     * Sets the maximum number of results per page supported by the web search to the given value.
+     * The maximum number of results per page supported by the web search to the given value.
      *
      * @param maxResults the maximum number of results per page, a value greater than zero
      * @return this builder instance
@@ -123,7 +122,16 @@ public class WebSearchClientBuilder {
   public interface UserAgentStep {
 
     /**
-     * Sets some arbitrary (meaningless) value for the user agent executing the web search requests.
+     * The user agent executing the web search requests.
+     *
+     * @param userAgent the user agent
+     * @return this builder instance
+     */
+    FinalStep userAgent(String userAgent);
+
+    /**
+     * Uses some arbitrary and meaningless value for the user agent executing the web search
+     * requests.
      *
      * @return this builder instance
      */
@@ -136,14 +144,6 @@ public class WebSearchClientBuilder {
      * @return this builder instance
      */
     FinalStep firefoxOnWindowsUserAgent();
-
-    /**
-     * Sets the given value as the user agent executing the web search requests.
-     *
-     * @param userAgent the user agent
-     * @return this builder instance
-     */
-    FinalStep userAgent(String userAgent);
   }
 
   public interface FinalStep {
