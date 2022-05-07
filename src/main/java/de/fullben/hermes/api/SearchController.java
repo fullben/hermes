@@ -54,7 +54,7 @@ public class SearchController {
         @ApiResponse(
             responseCode = "200",
             description =
-                "If the application was able to successfully use the provided query for executing a Google search"),
+                "If the application was able to successfully use the provided query for executing a web search"),
         @ApiResponse(
             responseCode = "400",
             description =
@@ -63,7 +63,7 @@ public class SearchController {
         @ApiResponse(
             responseCode = "500",
             description =
-                "If an error arises while executing the Google search or processing its results",
+                "If an error arises while executing the web search or processing its results",
             content = {@Content(schema = @Schema(implementation = ErrorRepresentation.class))})
       })
   @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
