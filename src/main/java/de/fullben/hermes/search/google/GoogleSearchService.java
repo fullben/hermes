@@ -22,6 +22,8 @@ public class GoogleSearchService extends CachingWebSearch {
             .queryParam("q")
             .resultsPerPageParam("num")
             .maxResultsPerPage(100)
+            .pageStartParam("start")
+            .zeroBasedPageStart()
             .defaultUserAgent()
             .build(),
         new GoogleSearchResultParser(),

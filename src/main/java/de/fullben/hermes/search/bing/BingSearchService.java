@@ -22,6 +22,8 @@ public class BingSearchService extends CachingWebSearch {
             .queryParam("q")
             .resultsPerPageParam("count")
             .maxResultsPerPage(50)
+            .pageStartParam("first")
+            .oneBasedPageStart()
             .firefoxOnWindowsUserAgent()
             .build(),
         new BingSearchResultParser(),

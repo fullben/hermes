@@ -8,6 +8,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import de.fullben.hermes.representation.SearchResultRepresentation;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -82,35 +83,45 @@ public abstract class CachingWebSearch {
     }
 
     // Actually execute the web search, parse, cache, and return the result
+    // Note: results will contain at least resultCount items
     List<SearchResultRepresentation> results = findResults(query, resultCount, 6);
     resultCache.put(query, results);
-    return results;
+    // Results may contain more items than requested, thus limit
+    return results.stream()
+        .limit(resultCount)
+        .map(SearchResultRepresentation::new)
+        .collect(Collectors.toList());
   }
 
   private List<SearchResultRepresentation> findResults(String query, int resultCount, int maxTries)
       throws SearchException {
     // Use count+2 as initial value, not count, because usually, a page with n results will not
     // contain n parsable results
-    int maxResults = resultCount + 2;
+    int minResults = resultCount + 2;
     while ((maxTries -= 1) >= 0) {
-      List<SearchResultRepresentation> results = searchAndParse(query, maxResults);
+      List<SearchResultRepresentation> results = searchAndParse(query, minResults);
       if (results.size() >= resultCount) {
-        return results.size() > resultCount ? results.subList(0, resultCount) : results;
+        // If we have at least the requested amount of results, return ALL
+        return results;
       }
       LOG.debug(
-          "Insufficient results ({}) for query '{}' with max result {}, retrying",
+          "Insufficient results ({}) for query '{}' with min result {}, retrying",
           box(results.size()),
           query,
-          box(maxResults));
-      maxResults += 2;
+          box(minResults));
+      minResults += 2;
     }
     throw new SearchException(
         "Failed to find " + resultCount + " results for query '" + query + "'");
   }
 
-  private List<SearchResultRepresentation> searchAndParse(String query, int maxResults)
+  private List<SearchResultRepresentation> searchAndParse(String query, int minResults)
       throws SearchException {
-    Document searchResults = webSearchClient.search(query, maxResults);
-    return webSearchResultParser.parse(searchResults);
+    List<Document> searchResults = webSearchClient.search(query, minResults);
+    List<SearchResultRepresentation> parsedResults = new ArrayList<>();
+    for (Document doc : searchResults) {
+      parsedResults.addAll(webSearchResultParser.parse(doc));
+    }
+    return parsedResults;
   }
 }
