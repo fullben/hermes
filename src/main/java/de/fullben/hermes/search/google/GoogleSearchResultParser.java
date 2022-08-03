@@ -18,7 +18,7 @@ import org.jsoup.nodes.Element;
  */
 public class GoogleSearchResultParser implements SearchResultParser {
 
-  private static final String DIV_CLASSES_RESULT_ITEM = "ZINbbc luh4tb xpd O9g5cc uUPGi";
+  private static final String DIV_CLASSES_RESULT_ITEM = "Gx5Zad fP1Qef xpd EtOod pkphOe";
   private static final String DIV_CLASSES_PAGE_HIERARCHY = "BNeawe UPmit AP7Wnd";
   private static final String DIV_CLASSES_TITLE = "BNeawe vvjwJb AP7Wnd";
   private static final String DIV_CLASSES_SNIPPET = "BNeawe s3v9rd AP7Wnd";
