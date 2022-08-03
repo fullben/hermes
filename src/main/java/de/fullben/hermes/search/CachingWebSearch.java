@@ -31,6 +31,7 @@ public abstract class CachingWebSearch {
   private final WebSearchClient webSearchClient;
   private final SearchResultParser webSearchResultParser;
   private final Cache<String, List<SearchResultRepresentation>> resultCache;
+  private int resultCountPadding;
 
   public CachingWebSearch(
       WebSearchClient webSearchClient,
@@ -44,6 +45,7 @@ public abstract class CachingWebSearch {
             .expireAfterWrite(cacheProperties.getExpireAfterMins(), TimeUnit.MINUTES)
             .maximumSize(cacheProperties.getMaxSize())
             .build();
+    resultCountPadding = 2;
   }
 
   /**
@@ -95,11 +97,12 @@ public abstract class CachingWebSearch {
 
   private List<SearchResultRepresentation> findResults(String query, int resultCount, int maxTries)
       throws SearchException {
-    // Use count+2 as initial value, not count, because usually, a page with n results will not
+    // Use count+n as initial value, not count, because usually, a page with n results will not
     // contain n parsable results
-    int minResults = resultCount + 2;
+    int minResults = resultCount + resultCountPadding;
     while ((maxTries -= 1) >= 0) {
       List<SearchResultRepresentation> results = searchAndParse(query, minResults);
+      LOG.debug("Requested {} results, found {}", box(resultCount), box(results.size()));
       if (results.size() >= resultCount) {
         // If we have at least the requested amount of results, return ALL
         return results;
@@ -109,7 +112,7 @@ public abstract class CachingWebSearch {
           box(results.size()),
           query,
           box(minResults));
-      minResults += 2;
+      minResults += resultCountPadding;
     }
     throw new SearchException(
         "Failed to find " + resultCount + " results for query '" + query + "'");
