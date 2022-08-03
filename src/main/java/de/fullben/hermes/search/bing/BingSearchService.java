@@ -1,9 +1,10 @@
 package de.fullben.hermes.search.bing;
 
 import de.fullben.hermes.search.CachingWebSearch;
-import de.fullben.hermes.search.SearchCacheConfiguration;
+import de.fullben.hermes.search.SearchCacheProperties;
 import de.fullben.hermes.search.WebSearchClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,10 +13,11 @@ import org.springframework.stereotype.Service;
  * @author Benedikt Full
  */
 @Service
+@EnableConfigurationProperties(SearchCacheProperties.class)
 public class BingSearchService extends CachingWebSearch {
 
   @Autowired
-  public BingSearchService(SearchCacheConfiguration cacheConfig) {
+  public BingSearchService(SearchCacheProperties cacheProperties) {
     super(
         WebSearchClient.builder()
             .searchUrl("http://www.bing.com/search")
@@ -27,6 +29,6 @@ public class BingSearchService extends CachingWebSearch {
             .firefoxOnWindowsUserAgent()
             .build(),
         new BingSearchResultParser(),
-        cacheConfig);
+        cacheProperties);
   }
 }

@@ -2,7 +2,7 @@ package de.fullben.hermes.search;
 
 import javax.validation.constraints.Min;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -10,32 +10,27 @@ import org.springframework.validation.annotation.Validated;
  *
  * @author Benedikt Full
  */
-@Configuration
 @ConfigurationProperties(prefix = "hermes.search.cache")
+@ConstructorBinding
 @Validated
-public class SearchCacheConfiguration {
+public class SearchCacheProperties {
 
   @Min(1)
-  private int expireAfterMins;
+  private final int expireAfterMins;
 
   @Min(1)
-  private int maxSize;
+  private final int maxSize;
 
-  public SearchCacheConfiguration() {}
+  public SearchCacheProperties(int expireAfterMins, int maxSize) {
+    this.expireAfterMins = expireAfterMins;
+    this.maxSize = maxSize;
+  }
 
   public int getExpireAfterMins() {
     return expireAfterMins;
   }
 
-  public void setExpireAfterMins(int expireAfterMins) {
-    this.expireAfterMins = expireAfterMins;
-  }
-
   public int getMaxSize() {
     return maxSize;
-  }
-
-  public void setMaxSize(int maxSize) {
-    this.maxSize = maxSize;
   }
 }

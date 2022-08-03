@@ -35,14 +35,14 @@ public abstract class CachingWebSearch {
   public CachingWebSearch(
       WebSearchClient webSearchClient,
       SearchResultParser webSearchResultParser,
-      SearchCacheConfiguration cacheConfig) {
+      SearchCacheProperties cacheProperties) {
     this.webSearchClient = notNull(webSearchClient);
     this.webSearchResultParser = notNull(webSearchResultParser);
-    notNull(cacheConfig);
+    notNull(cacheProperties);
     resultCache =
         Caffeine.newBuilder()
-            .expireAfterWrite(cacheConfig.getExpireAfterMins(), TimeUnit.MINUTES)
-            .maximumSize(cacheConfig.getMaxSize())
+            .expireAfterWrite(cacheProperties.getExpireAfterMins(), TimeUnit.MINUTES)
+            .maximumSize(cacheProperties.getMaxSize())
             .build();
   }
 
