@@ -4,7 +4,7 @@ package de.fullben.hermes.search;
  * Thrown whenever a component associated with web search execution, processing, or parsing
  * encounters an error.
  *
- * @author Benedikt Ful
+ * @author Benedikt Full
  */
 public class SearchException extends Exception {
 
