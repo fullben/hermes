@@ -1,6 +1,5 @@
 package de.fullben.hermes.search;
 
-import de.fullben.hermes.api.InvalidParamException;
 import de.fullben.hermes.representation.SearchResultRepresentation;
 import de.fullben.hermes.search.bing.BingSearchService;
 import de.fullben.hermes.search.google.GoogleSearchService;
@@ -31,22 +30,19 @@ public class WebSearchService {
    *
    * @param query the query string, usually case-insensitive
    * @param resultCount the number of results to be returned
-   * @param provider the web search provider to be employed, e.g., {@code "google"}
+   * @param provider the web search provider to be employed, e.g., {@code GOOGLE}
    * @return the found results
    * @throws SearchException if an error occurs while executing the web search or processing its
    *     result data
-   * @throws InvalidParamException if the given {@code provider} cannot be matched with any of the
-   *     supported providers
    */
-  public List<SearchResultRepresentation> search(String query, int resultCount, String provider)
-      throws SearchException, InvalidParamException {
-    SearchProvider searchProvider = SearchProvider.find(provider);
-    if (searchProvider == SearchProvider.GOOGLE) {
+  public List<SearchResultRepresentation> search(
+      String query, int resultCount, SearchProvider provider) throws SearchException {
+    if (provider == SearchProvider.GOOGLE) {
       return googleSearchService.search(query, resultCount);
-    } else if (searchProvider == SearchProvider.BING) {
+    } else if (provider == SearchProvider.BING) {
       return bingSearchService.search(query, resultCount);
     } else {
-      throw new InvalidParamException("Unsupported search provider: " + provider);
+      throw new IllegalArgumentException("Unsupported search provider: " + provider);
     }
   }
 }

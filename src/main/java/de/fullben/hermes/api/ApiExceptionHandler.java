@@ -31,13 +31,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ex, new ErrorRepresentation(status, ex.getMessage()), new HttpHeaders(), status, request);
   }
 
-  @ExceptionHandler(value = {InvalidParamException.class})
-  protected ResponseEntity<Object> handleConflict(InvalidParamException ex, WebRequest request) {
-    HttpStatus status = HttpStatus.BAD_REQUEST;
-    return handleExceptionInternal(
-        ex, new ErrorRepresentation(status, ex.getMessage()), new HttpHeaders(), status, request);
-  }
-
   @ExceptionHandler(value = {SearchException.class})
   protected ResponseEntity<Object> handleConflict(SearchException ex, WebRequest request) {
     HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;

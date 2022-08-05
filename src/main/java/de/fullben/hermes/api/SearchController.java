@@ -3,6 +3,7 @@ package de.fullben.hermes.api;
 import de.fullben.hermes.representation.ErrorRepresentation;
 import de.fullben.hermes.representation.SearchResultRepresentation;
 import de.fullben.hermes.search.SearchException;
+import de.fullben.hermes.search.SearchProvider;
 import de.fullben.hermes.search.WebSearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -70,8 +71,7 @@ public class SearchController {
   public ResponseEntity<List<SearchResultRepresentation>> search(
       @RequestParam("q") @NotBlank String query,
       @RequestParam(value = "n", required = false, defaultValue = "10") @Min(1) int resultCount,
-      @RequestParam(value = "p", required = false, defaultValue = "google") @NotBlank
-          String provider)
+      @RequestParam(value = "p", required = false, defaultValue = "GOOGLE") SearchProvider provider)
       throws SearchException {
     return ResponseEntity.ok(webSearchService.search(query, resultCount, provider));
   }
