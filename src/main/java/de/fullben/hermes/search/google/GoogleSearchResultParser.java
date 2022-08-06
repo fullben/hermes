@@ -3,12 +3,14 @@ package de.fullben.hermes.search.google;
 import static de.fullben.hermes.util.Preconditions.notNull;
 
 import de.fullben.hermes.representation.SearchResultRepresentation;
+import de.fullben.hermes.search.DocumentStructureException;
 import de.fullben.hermes.search.SearchException;
 import de.fullben.hermes.search.SearchResultParser;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  * Parser for converting a {@link Document} representing a Google web search result page to a more
@@ -32,22 +34,35 @@ public class GoogleSearchResultParser implements SearchResultParser {
    * @param doc a document, not {@code null}
    * @return a list of all parsable results found
    * @throws SearchException if an error occurs while trying to parse the document
+   * @throws DocumentStructureException if the given document does not contain any Google search
+   *     result items
    */
   @Override
   public List<SearchResultRepresentation> parse(Document doc) throws SearchException {
     notNull(doc);
+    Elements resultElements = findResultElements(doc);
     try {
-      return doc.select(divClasses(DIV_CLASSES_RESULT_ITEM)).stream()
-          .map(this::parseResult)
-          .collect(Collectors.toList());
+      return resultElements.stream().map(this::parseResult).collect(Collectors.toList());
     } catch (Exception e) {
       // Gotta catch 'em all: not really best practice, but it's very likely that this will fail
-      // eventually (e.g., due to Google changing its site layout, or simply make a new obfuscation
-      // run on their HTML class names, so on...), therefore we wrap any error in an exception type
-      // that can be handled reliably further up the call chain
+      // eventually (e.g., due to Google changing its site layout, or simply making a new
+      // obfuscation run on their HTML class names, so on...), therefore we wrap any error in an
+      // exception type that can be handled reliably further up the call chain
       throw new SearchException(
           "An error occurred while trying to parse a Google search result", e);
     }
+  }
+
+  private Elements findResultElements(Document doc) throws DocumentStructureException {
+    String resultItemDivClasses = divClasses(DIV_CLASSES_RESULT_ITEM);
+    Elements resultsContainer = doc.select(resultItemDivClasses);
+    if (resultsContainer.isEmpty()) {
+      throw new DocumentStructureException(
+          "Document does not contain any Google search results identified by div classes '"
+              + resultItemDivClasses
+              + "'");
+    }
+    return resultsContainer;
   }
 
   private SearchResultRepresentation parseResult(Element result) {

@@ -3,12 +3,14 @@ package de.fullben.hermes.search.bing;
 import static de.fullben.hermes.util.Preconditions.notNull;
 
 import de.fullben.hermes.representation.SearchResultRepresentation;
+import de.fullben.hermes.search.DocumentStructureException;
 import de.fullben.hermes.search.SearchException;
 import de.fullben.hermes.search.SearchResultParser;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  * Parser for converting a {@link Document} representing a Bing web search result page to a more
@@ -23,21 +25,42 @@ public class BingSearchResultParser implements SearchResultParser {
 
   public BingSearchResultParser() {}
 
+  /**
+   * Finds and returns all Bing web search results found in the result list element located in the
+   * given search result page.
+   *
+   * @param doc a document, not {@code null}
+   * @return a list of all parsable results found
+   * @throws SearchException if an error occurs while trying to parse the document
+   * @throws DocumentStructureException if the given document does not contain a Bing search result
+   *     list element
+   */
   @Override
   public List<SearchResultRepresentation> parse(Document doc) throws SearchException {
     notNull(doc);
+    Elements resultElements = findResultElements(doc);
     try {
-      return doc.getElementById(ID_RESULT_LIST).children().stream()
+      return resultElements.stream()
           .filter(this::isParsableResult)
           .map(this::parseResult)
           .collect(Collectors.toList());
     } catch (Exception e) {
       // Gotta catch 'em all: not really best practice, but it's very likely that this will fail
-      // eventually (e.g., due to Bing changing its site layout, or simply make an obfuscation
-      // run on their HTML class names, so on...), therefore we wrap any error in an exception type
-      // that can be handled reliably further up the call chain
+      // eventually (e.g., due to Bing changing its site layout), therefore we wrap any error in an
+      // exception type that can be handled reliably further up the call chain
       throw new SearchException("An error occurred while trying to parse a Bing search result", e);
     }
+  }
+
+  private Elements findResultElements(Document doc) throws DocumentStructureException {
+    Element resultsContainer = doc.getElementById(ID_RESULT_LIST);
+    if (resultsContainer == null) {
+      throw new DocumentStructureException(
+          "Document does not contain Bing search results container element with id '"
+              + ID_RESULT_LIST
+              + "'");
+    }
+    return resultsContainer.children();
   }
 
   private boolean isParsableResult(Element result) {
