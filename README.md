@@ -10,12 +10,12 @@ Parameter|Description|Values|Required
 ---|---|---|---
 `q`|The query term to be used|Any non-blank string|Yes
 `n`|The number of results to be returned by the search|A positive integer|No (defaults to 10)
-`p`|The search provider to be used|`google` or `bing`|No (defaults to `google`)
+`p`|The search provider to be used|`GOOGLE` or `BING`|No (defaults to `GOOGLE`)
 
 An example request for searching the term *neptune*, expecting 20 results and using Bing web search is shown in the following:
 
 ```
-GET HOST:PORT/api/search?q=neptune&n=20&p=bing
+GET HOST:PORT/api/search?q=neptune&n=20&p=BING
 ```
 
 Furthermore, the application features UI-based API documentation, which can be found at `HOST:PORT/swagger-ui/index.html`. This page can be used to inspect and try out the available API endpoints.
