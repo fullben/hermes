@@ -31,20 +31,22 @@ public abstract class CachingWebSearch {
   private final WebSearchClient webSearchClient;
   private final SearchResultParser webSearchResultParser;
   private final Cache<String, List<SearchResultRepresentation>> resultCache;
-  private int resultCountPadding;
+  private final int maxTries;
+  private final int resultCountPadding;
 
   public CachingWebSearch(
       WebSearchClient webSearchClient,
       SearchResultParser webSearchResultParser,
-      SearchCacheProperties cacheProperties) {
+      SearchProperties searchProperties) {
+    notNull(searchProperties);
     this.webSearchClient = notNull(webSearchClient);
     this.webSearchResultParser = notNull(webSearchResultParser);
-    notNull(cacheProperties);
     resultCache =
         Caffeine.newBuilder()
-            .expireAfterWrite(cacheProperties.getExpireAfterMins(), TimeUnit.MINUTES)
-            .maximumSize(cacheProperties.getMaxSize())
+            .expireAfterWrite(searchProperties.getCacheExpireAfterMins(), TimeUnit.MINUTES)
+            .maximumSize(searchProperties.getCacheMaxSize())
             .build();
+    maxTries = searchProperties.getMaxTries();
     resultCountPadding = 2;
   }
 
@@ -86,7 +88,7 @@ public abstract class CachingWebSearch {
 
     // Actually execute the web search, parse, cache, and return the result
     // Note: results will contain at least resultCount items
-    List<SearchResultRepresentation> results = findResults(query, resultCount, 6);
+    List<SearchResultRepresentation> results = findResults(query, resultCount, maxTries);
     resultCache.put(query, results);
     // Results may contain more items than requested, thus limit
     return results.stream()
@@ -102,7 +104,6 @@ public abstract class CachingWebSearch {
     int minResults = resultCount + resultCountPadding;
     while ((maxTries -= 1) >= 0) {
       List<SearchResultRepresentation> results = searchAndParse(query, minResults);
-      LOG.debug("Requested {} results, found {}", box(resultCount), box(results.size()));
       if (results.size() >= resultCount) {
         // If we have at least the requested amount of results, return ALL
         return results;
@@ -125,6 +126,7 @@ public abstract class CachingWebSearch {
     for (Document doc : searchResults) {
       parsedResults.addAll(webSearchResultParser.parse(doc));
     }
+    LOG.debug("Requested {} results, found {}", box(minResults), box(parsedResults.size()));
     return parsedResults;
   }
 }

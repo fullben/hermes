@@ -25,13 +25,34 @@ The application is "secured" using a very crude basic authentication implementat
 - Regular user (username and password: *user*): This user is authorized to make calls to the search-endpoint.
 - Admin user (username and password: *admin*): This user is authorized to perform all actions the regular user is allowed to execute. Furthermore, this user can access the API documentation.
 
-## Setup and Deployment
+## Getting Started
+
+To get a local copy up and running follow these simple steps.
+
+### Prerequisites
+
+Make sure you have the following software on your system:
+
+- A Java 11 JDK (preferably [AdoptOpenJDK](https://adoptopenjdk.net/))
+- A Java IDE (preferably [IntelliJ IDEA](https://www.jetbrains.com/idea/))
+
+### Configuration
+
+The application has configuration properties for tuning the behavior of the search implementation. The properties can be defined in the ``application.properties`` file. Their value ranges and effects are described in the following table.
+
+Property|Value|Description
+---|---|---
+``hermes.search.cache-expire-after-mins``|Any number equal to or greater than one|The number of minutes for which each search result will remain in the cache.
+``hermes.search.cache-max-size``|Any number equal to or greater than one|The maximum size of the query result cache.
+``hermes.search.max-tries``|Any number equal to or greater than one|The maximum number of times the search implementation will attempt to contact the search provider for acquiring the desired amount of search results for a specified query term.
+
+### Running the Application
 
 For launching the application from an IDE, run the `HermesApplication` class.
 
 To build the application, simply call the `gradle bootJar` task. This will generate an application JAR and place it in `PROJECT_ROOT/build/libs`.
 
-For starting a Docker container hosting the application, simply call `docker-compose up -d` while in the root directory of the project. This will build and launch an appropriate container.
+For starting a Docker container hosting the application, call `docker-compose up -d` while in the root directory of the project. This will build and launch an appropriate container.
 
 ## Contributing
 
